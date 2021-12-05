@@ -1,16 +1,20 @@
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import java.util.ListIterator;
 import java.util.Scanner;
-
+import com.amazonaws.services.ec2.model.*;
+import java.util.List;
+import com.amazonaws.services.ec2.*;
 
 public class Main {
-
     public static void  main(String[] args) throws Exception {
 
 
         final AmazonEC2 ec2= AmazonEC2ClientBuilder.defaultClient();
         int menu_num;
         String instance_id;
+        String instance_id2;
+        String instance_id3;
         Scanner num = new Scanner(System.in);
         Scanner id = new Scanner(System.in);
         
@@ -32,61 +36,152 @@ public class Main {
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter an integer: ");
             menu_num=num.nextInt();
-            
-            //List Instance
+
+
             if(menu_num==1)
             {
             	System.out.println("List Instance");
-            	ListInstance.listInstance(ec2);
+                boolean done=false;
+                DescribeInstancesRequest request= new DescribeInstancesRequest();
+
+                while(!done)
+                {
+                    System.out.println("Listing instances....");
+                    DescribeInstancesResult response = ec2.describeInstances(request);
+                    for(Reservation reservation: response.getReservations())
+                    {
+                        for(Instance instance: reservation.getInstances())
+                        {
+                            System.out.printf(
+                                    "[id] %s, " +
+                                            "[AMI] %s, " +
+                                            "[type] %s, " +
+                                            "[state] %s, " +
+                                            "[monitoring state] %s\n",
+                                    instance.getInstanceId(),
+                                    instance.getImageId(),
+                                    instance.getInstanceType(),
+                                    instance.getState().getName(),
+                                    instance.getMonitoring().getState());
+                        }
+                    }
+                    request.setNextToken(response.getNextToken());
+                    if(response.getNextToken()==null)
+                    {
+                        done=true;
+                    }
+                }
             	System.out.println("Finish");
             }
 
             else if(menu_num==2)
             {
-            	AvailableZones.availableZone(ec2);
+                DescribeAvailabilityZonesResult zones_response = ec2.describeAvailabilityZones();
+                for(AvailabilityZone zone : zones_response.getAvailabilityZones()) {
+                    System.out.printf(
+                            "List zone %s " +
+                                    "with status %s " +
+                                    "in region %s \n",
+                            zone.getZoneName(),
+                            zone.getState(),
+                            zone.getRegionName());
+                }
+                System.out.println("List Success");
             	
             }
             else if(menu_num==3)
             {
             	System.out.println("Put your instance Id");
             	instance_id=id.nextLine();
-            	StartInstance.startIns(ec2,instance_id);
+                System.out.println("Start Instances");
+                System.out.println("instance ID: "+ instance_id);
+                StartInstancesRequest request=new StartInstancesRequest().withInstanceIds(instance_id);
+                ec2.startInstances(request);
+                System.out.println("Start Success");
             }
             else if(menu_num==4)
             {
-            	AvailableRegions.availableRegions(ec2);
+                DescribeRegionsResult regions_response = ec2.describeRegions();
+                for(Region region : regions_response.getRegions()) {
+                    System.out.printf(
+                            "List region %s " +
+                                    "with endpoint %s \n",
+                            region.getRegionName(),
+                            region.getEndpoint());
+                }
+                System.out.println("List Success");
             }
             else if(menu_num==5)
             {
             	System.out.println("Put your instance Id");
-            	instance_id=id.nextLine();
-            	StopInstance.stopInstance(ec2,instance_id);
+            	instance_id2=id.nextLine();
+                StopInstancesRequest request = new StopInstancesRequest().withInstanceIds(instance_id2);
+                ec2.stopInstances(request);
+                System.out.printf("Instance ID: %s",instance_id2);
+                System.out.println("Stop success");
             }
-            //MakeInstance
             else if(menu_num==6)
             {
-            	System.out.println("You'll make Instance");
-            	MakeInstance.makeInstance(ec2);
+            	System.out.println("Put AMI ID :");
+                Scanner ami=new Scanner(System.in);
+
+                String ami_id;
+                ami_id=ami.nextLine();
+                RunInstancesRequest run_request=new RunInstancesRequest().withImageId(ami_id).withInstanceType(InstanceType.T2Micro).withMaxCount(1).withMinCount(1);
+                RunInstancesResult run_response=ec2.runInstances(run_request);
+                String reservation_id=run_response.getReservation().getInstances().get(0).getInstanceId();
+                System.out.println(reservation_id);
             	
             }
-            //RebootInstance
             else if(menu_num==7) {
                 System.out.println("Put your instance Id");
-                instance_id = id.nextLine();
-                RebootInstance.rebootInstance(ec2, instance_id);
+                instance_id3 = id.nextLine();
+                RebootInstancesRequest request = new RebootInstancesRequest().withInstanceIds(instance_id3);
+                ec2.rebootInstances(request);
+                System.out.println("Reboot Instance Success");
             }
-            //list Images
             else if(menu_num==8)
             {
-            	ListImages.listImages(ec2);
+                DescribeImagesRequest request = new DescribeImagesRequest().withOwners("self");
+                DescribeImagesResult response = ec2.describeImages(request);
+                System.out.println("list images");
+                List<Image> images = response.getImages();
+
+                if (images.isEmpty()) {
+                    System.out.println("Empty");
+                }
+                else
+                {
+                    for(Image image:images)
+
+                        System.out.println(image.getImageId());
+                    System.out.println("\n");
+                }
+                System.out.println("Success");
             }
-            //Describe Accounts
             else if(menu_num==9)
             {
-            	DescribeAccounts.describeAccounts(ec2);
+                try{
+                    DescribeAccountAttributesResult accountResults = ec2.describeAccountAttributes();
+                    List<AccountAttribute> accountList = accountResults.getAccountAttributes();
+                    for (ListIterator iter = accountList.listIterator(); iter.hasNext(); ) {
+                        AccountAttribute attribute = (AccountAttribute) iter.next();
+                        System.out.print("\n Attribute name : "+attribute.getAttributeName());
+                        List<AccountAttributeValue> values = attribute.getAttributeValues();
+
+                        for (ListIterator iterVals = values.listIterator(); iterVals.hasNext(); ) {
+                            AccountAttributeValue myValue = (AccountAttributeValue) iterVals.next();
+                            System.out.print("\n Value : "+myValue.getAttributeValue());
+                        }
+                    }
+                    System.out.print("Complete");
+                }
+                catch (Exception e)
+                {
+                    e.getStackTrace();
+                }
             	System.out.println("Complete");
             }
-            //Quit
             else if(menu_num==99)
             {
             	break;
