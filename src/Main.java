@@ -11,7 +11,6 @@ public class Main {
         final AmazonEC2 ec2= AmazonEC2ClientBuilder.defaultClient();
         int menu_num;
         String instance_id;
-        String instance_test="i-077c7e78bf16a3392";
         Scanner num = new Scanner(System.in);
         Scanner id = new Scanner(System.in);
         

@@ -11,41 +11,35 @@ public class ListInstance {
 
 	public static void listInstance(AmazonEC2 ec2)
 	{
-		boolean finish_instance=false;
-		
+		boolean done=false;
 		DescribeInstancesRequest request= new DescribeInstancesRequest();
 		
-		while(!finish_instance)
+		while(!done)
 		{
+			System.out.println("Listing instances....");
 			DescribeInstancesResult response = ec2.describeInstances(request);
-			
 			for(Reservation reservation: response.getReservations())
 			{
 				for(Instance instance: reservation.getInstances())
 				{
 					System.out.printf(
-							"Found instance with id %s, " +
-							"Image ID %s, "+
-						    "Instance Type %s, " +
-							"state %b " +
-						    "and monitoring state %b\n",
+							"[id] %s, " +
+									"[AMI] %s, " +
+									"[type] %s, " +
+									"[state] %10s, " +
+									"[monitoring state] %s",
 							instance.getInstanceId(),
 							instance.getImageId(),
 							instance.getInstanceType(),
-							instance.getState(),
-							instance.getMonitoring().getState()
-							);
+							instance.getState().getName(),
+							instance.getMonitoring().getState());
 				}
 			}
-			
 			request.setNextToken(response.getNextToken());
-			
 			if(response.getNextToken()==null)
 			{
-				finish_instance=true;
+				done=true;
 			}
-				
 		}
-		
 	}
 }

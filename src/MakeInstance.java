@@ -12,7 +12,7 @@ public class MakeInstance {
 	
 	public static void makeInstance(AmazonEC2 ec2)
 	{
-		System.out.println("Put your AMI ID what you want");
+		System.out.println("Put AMI ID :");
 		Scanner ami=new Scanner(System.in);
 
 		String ami_id;
@@ -21,9 +21,7 @@ public class MakeInstance {
 		RunInstancesResult run_response=ec2.runInstances(run_request);
 		String reservation_id=run_response.getReservation().getInstances().get(0).getInstanceId();
 		System.out.println(reservation_id);
-		
-		
-		
+
 	}
 
 }

@@ -11,6 +11,6 @@ public class RebootInstance {
     	RebootInstancesRequest request = new RebootInstancesRequest().withInstanceIds(instanceid);
     	RebootInstancesResult response = ec2.rebootInstances(request);
     	ec2.rebootInstances(request);
-        System.out.println("Reboot Instances");
+        System.out.println("Reboot Instance Success");
     }
 }

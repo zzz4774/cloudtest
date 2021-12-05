@@ -13,17 +13,14 @@ public class DescribeAccounts {
 		try{
 		    DescribeAccountAttributesResult accountResults = ec2.describeAccountAttributes();
 		    List<AccountAttribute> accountList = accountResults.getAccountAttributes();
-
 		    for (ListIterator iter = accountList.listIterator(); iter.hasNext(); ) {
-
 		        AccountAttribute attribute = (AccountAttribute) iter.next();
-		        System.out.print("\n The name of the attribute is "+attribute.getAttributeName());
+		        System.out.print("\n Attribute name : "+attribute.getAttributeName());
 		        List<AccountAttributeValue> values = attribute.getAttributeValues();
 
-		         //iterate through the attribute values
 		        for (ListIterator iterVals = values.listIterator(); iterVals.hasNext(); ) {
 		            AccountAttributeValue myValue = (AccountAttributeValue) iterVals.next();
-		            System.out.print("\n The value of the attribute is "+myValue.getAttributeValue());
+		            System.out.print("\n Value : "+myValue.getAttributeValue());
 		        }
 		    }
 		    System.out.print("Complete");

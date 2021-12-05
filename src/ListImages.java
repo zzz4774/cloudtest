@@ -8,13 +8,13 @@ public class ListImages {
 
 	public static  void listImages(AmazonEC2 ec2)
 	{
-		DescribeImagesRequest request = new DescribeImagesRequest();
+		DescribeImagesRequest request = new DescribeImagesRequest().withOwners("self");
 		DescribeImagesResult response = ec2.describeImages(request);
 		System.out.println("list images");
 		List<Image> images = response.getImages();
 
 	    if (images.isEmpty()) {
-	    	System.out.println("Empty Image");
+	    	System.out.println("Empty");
 	    }
 	    else
 	    {
@@ -23,6 +23,6 @@ public class ListImages {
 	    	System.out.println(image.getImageId());
 	    	System.out.println("\n");
 	    }
-		System.out.println("Complete");
+		System.out.println("Success");
 	}
 }

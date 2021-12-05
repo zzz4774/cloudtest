@@ -14,7 +14,6 @@ public class AvailableRegions {
 		        region.getRegionName(),
 		        region.getEndpoint());
 		}
-		
-		System.out.println("Region complete");
+		System.out.println("List Success");
 	}
 }

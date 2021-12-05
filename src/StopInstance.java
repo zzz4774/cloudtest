@@ -8,15 +8,9 @@ public class StopInstance {
 
     public static void stopInstance(AmazonEC2 ec2, String instanceid)
     {
-
-    	
 		StopInstancesRequest request = new StopInstancesRequest().withInstanceIds(instanceid);
-		
 		ec2.stopInstances(request);
-		
-		System.out.println("Success");
 		System.out.printf("Instanceid: %s",instanceid);
-		
-		  
+		System.out.println("Stop success");
     }
 }

@@ -11,14 +11,8 @@ public class StartInstance {
     {
         System.out.println("Start Instances");
         System.out.println("instance ID: "+ instance_id);
-
-        StartInstancesRequest request=new StartInstancesRequest()
-                .withInstanceIds(instance_id);
-
+        StartInstancesRequest request=new StartInstancesRequest().withInstanceIds(instance_id);
         ec2.startInstances(request);
-
-        System.out.println("Start Instances");
-        
-        
+        System.out.println("Start Success");
     }
 }
