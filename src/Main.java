@@ -5,6 +5,8 @@ import java.util.Scanner;
 import com.amazonaws.services.ec2.model.*;
 import java.util.List;
 import com.amazonaws.services.ec2.*;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
 
 public class Main {
     public static void  main(String[] args) throws Exception {
@@ -15,6 +17,8 @@ public class Main {
         String instance_id;
         String instance_id2;
         String instance_id3;
+        String instance_id4;
+        String instance_id5;
         Scanner num = new Scanner(System.in);
         Scanner id = new Scanner(System.in);
         
@@ -28,11 +32,12 @@ public class Main {
             System.out.println("  Cloud Computing, Computer Science Department              ");
             System.out.println("                           at Chungbuk National University  ");
             System.out.println("------------------------------------------------------------");
-            System.out.println("  1. list instance                2. available zones         ");
+            System.out.println("  1. list instance                2. available zones        ");
             System.out.println("  3. start instance               4. available regions      ");
             System.out.println("  5. stop instance                6. create instance        ");
             System.out.println("  7. reboot instance              8. list images            ");
-            System.out.println("  9. describe my acc              99. quit                   ");
+            System.out.println("  9. describe my acc             10. monitor instance      ");
+            System.out.println(" 11. unmonitor instance          99. quit                  ");
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter an integer: ");
             menu_num=num.nextInt();
@@ -174,13 +179,28 @@ public class Main {
                             System.out.print("\n Value : "+myValue.getAttributeValue());
                         }
                     }
-                    System.out.print("Complete");
                 }
                 catch (Exception e)
                 {
                     e.getStackTrace();
                 }
             	System.out.println("Complete");
+            }
+            else if(menu_num==10)
+            {
+                System.out.println("Put your instance Id");
+                instance_id4 = id.nextLine();
+                MonitorInstancesRequest request = new MonitorInstancesRequest().withInstanceIds(instance_id4);
+                ec2.monitorInstances(request);
+                System.out.print("Monitor Success");
+            }
+            else if(menu_num==11)
+            {
+                System.out.println("Put your instance Id");
+                instance_id5 = id.nextLine();
+                UnmonitorInstancesRequest request = new UnmonitorInstancesRequest().withInstanceIds(instance_id5);
+                ec2.unmonitorInstances(request);
+                System.out.println("Unmonitor Success");
             }
             else if(menu_num==99)
             {
